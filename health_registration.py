@@ -1,13 +1,16 @@
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.keys import Keys
+from selenium.common.exceptions import TimeoutException
+
 from time import sleep
+
 
 # 用户名（学号）
 username = '541713460000'
 
 # 密码（信息门户密码）
-password = 'xxxxxx'
+password = 'xxxxxxxx'
 
 # 校区，科学：'KX'  走读：'ZD'
 dormitory_loc = 'KX'
@@ -34,29 +37,39 @@ zhoukou = 0
 # 其他需要说明的情况
 other_info = '无'
 
-url = 'http://iapp.zzuli.edu.cn/portal/portal-app/app-5/user.html'
 
-mobile_emulation = {'deviceName':'iPhone 6'}
+def login(driver):
+    try:
+        driver.find_element_by_id('tx_username').send_keys(username)
+        driver.find_element_by_id('tx_password').send_keys(password)
+        driver.find_element_by_class_name('login_btn').click()
+        sleep(1)
+        print('登录成功，开始登记')
 
-options = Options()
-options.add_experimental_option("mobileEmulation", mobile_emulation)
+    except TimeoutException:
+        print('登录超时，网络问题')
+        return False
 
-driver = webdriver.Chrome(chrome_options=options)
-driver.get(url)
+    return True
 
-try:
-    driver.find_element_by_id('tx_username').send_keys(username)
-    driver.find_element_by_id('tx_password').send_keys(password)
-    sleep(0.5)
 
-    driver.find_element_by_class_name('login_btn').click()
+def register(driver):
+
+    url = 'http://iapp.zzuli.edu.cn/portal/portal-app/app-5/user.html'
+    driver.get(url)
     sleep(1)
     driver.refresh()
-    print('登录成功')
+    auth = login(driver)
+
+    if auth is False:
+        return False
 
     try:
-        driver.get('http://microapp.zzuli.edu.cn/microapplication/yqfk_qy/home.html')
-        sleep(0.5)
+        main_url = 'http://microapp.zzuli.edu.cn/microapplication/yqfk_qy/home.html'
+        driver.get(main_url)
+        sleep(1)
+        driver.refresh()
+
         driver.find_element_by_xpath(".//div[@class='content']/div[1]/a").send_keys(Keys.ENTER)
         sleep(0.5)
 
@@ -76,10 +89,12 @@ try:
                 './/li[@role="button" and text()="科学校区"]'
             ).click()
             sleep(0.5)
+
             driver.find_element_by_xpath(
-                './/li[@role="button" and text()="'+dormitory_buildin+'号楼"]'
+                './/li[@role="button" and text()="' + dormitory_buildin + '号楼"]'
             ).click()
             sleep(0.5)
+
         elif dormitory_loc == 'ZD':
             driver.find_element_by_xpath(
                 './/li[@role="button" and text()="校外走读"]'
@@ -122,36 +137,36 @@ try:
             driver.find_element_by_xpath(
                 'html/body/div/div/div[3]/div[3]/div[22]/div/div[2]/div/div/div/div/div/div[2]'
             ).click()
-            flag = 1
             sleep(0.5)
+            flag = 1
 
         if nanyang == 1:
             driver.find_element_by_xpath(
                 'html/body/div/div/div[3]/div[3]/div[22]/div/div[2]/div/div/div/div/div/div[3]'
             ).click()
-            flag = 1
             sleep(0.5)
+            flag = 1
 
         if zhumadian == 1:
             driver.find_element_by_xpath(
                 'html/body/div/div/div[3]/div[3]/div[22]/div/div[2]/div/div/div/div/div/div[4]'
             ).click()
-            flag = 1
             sleep(0.5)
+            flag = 1
 
         if shangqiu == 1:
             driver.find_element_by_xpath(
                 'html/body/div/div/div[3]/div[3]/div[22]/div/div[2]/div/div/div/div/div/div[5]'
             ).click()
-            flag = 1
             sleep(0.5)
+            flag = 1
 
         if zhoukou == 1:
             driver.find_element_by_xpath(
                 'html/body/div/div/div[3]/div[3]/div[22]/div/div[2]/div/div/div/div/div/div[6]'
             ).click()
-            flag = 1
             sleep(0.5)
+            flag = 1
 
         if flag == 0:
             driver.find_element_by_xpath(
@@ -219,12 +234,41 @@ try:
         ).click()
         sleep(0.5)
 
-        print('登记成功')
+    except TimeoutException:
+        print('登记超时，网络问题')
+        return False
+
+    except Exception:
+        print('登记失败，请检查信息')
+        return False
+
+    return True
+
+
+def main():
+
+    mobile_emulation = {'deviceName': 'iPhone 6'}
+    options = Options()
+    options.add_experimental_option("mobileEmulation", mobile_emulation)
+
+    cnt = 0
+    while True:
+        driver = webdriver.Chrome(chrome_options=options)
+        driver.set_page_load_timeout(20)
+        cnt += 1
+        print('正在进行第', cnt, '次尝试')
+        res = register(driver)
+
+        if res is True:
+            print('登记成功，愿疫情早日结束！')
+            break
+        elif cnt == 5:
+            print('超过尝试次数，请重新登记！')
+            break
+
         driver.quit()
+        sleep(5)
 
-    except:
-        print('登记失败')
 
-except:
-    print('登录失败')
-
+if __name__ == "__main__":
+    main()
