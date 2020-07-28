@@ -1,3 +1,5 @@
+import os
+
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.keys import Keys
@@ -54,7 +56,6 @@ def login(driver):
 
 
 def register(driver):
-
     url = 'http://iapp.zzuli.edu.cn/portal/portal-app/app-5/user.html'
     driver.get(url)
     sleep(1)
@@ -246,7 +247,6 @@ def register(driver):
 
 
 def main():
-
     mobile_emulation = {'deviceName': 'iPhone 6'}
     options = Options()
     options.add_experimental_option("mobileEmulation", mobile_emulation)
@@ -268,6 +268,8 @@ def main():
 
         driver.quit()
         sleep(5)
+
+    os.system('pause')
 
 
 if __name__ == "__main__":
