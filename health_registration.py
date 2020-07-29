@@ -3,6 +3,9 @@ import os
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException
 
 from time import sleep
@@ -71,11 +74,11 @@ def register(driver):
         sleep(1)
         driver.refresh()
 
-        driver.find_element_by_xpath(".//div[@class='content']/div[1]/a").send_keys(Keys.ENTER)
+        driver.find_element_by_xpath('.//div[@class="content"]/div[1]/a').send_keys(Keys.ENTER)
         sleep(0.5)
 
         # 修改地址获取方式为 h5
-        driver.execute_script("now_from='h5'")
+        driver.execute_script('now_from="h5"')
         sleep(0.5)
 
         # 9 在校居住宿舍楼
@@ -176,10 +179,18 @@ def register(driver):
             sleep(0.5)
 
         # 15 目前您的位置和居住地点（由浏览器自动获取
-        driver.find_element_by_xpath(
-            'html/body/div/div/div[3]/div[5]/div/div[2]/div/div/div/textarea'
-        ).click()
-        sleep(1)
+        try:
+            locator = (By.XPATH, 'html/body/div/div/div[3]/div[5]/div/div[2]/div/div/div/textarea')
+            driver.find_element_by_xpath(
+                'html/body/div/div/div[3]/div[5]/div/div[2]//div/div/div/textarea'
+            ).click()
+            WebDriverWait(driver, 20).until(EC.text_to_be_present_in_element_value(locator, ''))
+
+        except TimeoutException:
+            print('地址获取超时')
+            return False
+
+        sleep(0.5)
 
         # 15-1 你获取的位置与本人目前所在地是否相符合（默认：是
         driver.find_element_by_xpath(
@@ -239,7 +250,8 @@ def register(driver):
         print('登记超时，网络问题')
         return False
 
-    except Exception:
+    except Exception as e:
+        print(e)
         print('登记失败，请检查信息')
         return False
 
@@ -254,7 +266,7 @@ def main():
     cnt = 0
     while True:
         driver = webdriver.Chrome(chrome_options=options)
-        driver.set_page_load_timeout(20)
+        driver.set_page_load_timeout(30)
         cnt += 1
         print('正在进行第', cnt, '次尝试')
         res = register(driver)
