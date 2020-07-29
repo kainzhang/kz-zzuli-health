@@ -44,9 +44,16 @@ other_info = '无'
 
 
 def login(driver):
+    url = 'http://iapp.zzuli.edu.cn/portal/portal-app/app-5/user.html'
+    driver.get(url)
+
     try:
+        locator = (By.ID, 'tx_username')
+        WebDriverWait(driver, 20).until(EC.presence_of_element_located(locator))
+
         driver.find_element_by_id('tx_username').send_keys(username)
         driver.find_element_by_id('tx_password').send_keys(password)
+        sleep(1)
         driver.find_element_by_class_name('login_btn').click()
         sleep(1)
         print('登录成功，开始登记')
@@ -59,23 +66,21 @@ def login(driver):
 
 
 def register(driver):
-    url = 'http://iapp.zzuli.edu.cn/portal/portal-app/app-5/user.html'
-    driver.get(url)
-    sleep(1)
-    driver.refresh()
     auth = login(driver)
-
     if auth is False:
         return False
 
     try:
         main_url = 'http://microapp.zzuli.edu.cn/microapplication/yqfk_qy/home.html'
         driver.get(main_url)
-        sleep(1)
-        driver.refresh()
+
+        locator = (By.XPATH, './/div[@class="content"]/div[1]/a')
+        WebDriverWait(driver, 30).until(EC.presence_of_element_located(locator))
 
         driver.find_element_by_xpath('.//div[@class="content"]/div[1]/a').send_keys(Keys.ENTER)
-        sleep(0.5)
+
+        locator = (By.XPATH, 'html/body/div/div/div[3]/div[3]/div[10]/div[2]/div/div/div/input')
+        WebDriverWait(driver, 30).until(EC.presence_of_element_located(locator))
 
         # 修改地址获取方式为 h5
         driver.execute_script('now_from="h5"')
@@ -184,7 +189,7 @@ def register(driver):
             driver.find_element_by_xpath(
                 'html/body/div/div/div[3]/div[5]/div/div[2]//div/div/div/textarea'
             ).click()
-            WebDriverWait(driver, 20).until(EC.text_to_be_present_in_element_value(locator, ''))
+            WebDriverWait(driver, 30).until(EC.text_to_be_present_in_element_value(locator, ''))
 
         except TimeoutException:
             print('地址获取超时')
