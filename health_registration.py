@@ -1,15 +1,17 @@
+import datetime
 import os
-
-from selenium import webdriver
-from selenium.webdriver.chrome.options import Options
-from selenium.webdriver.common.keys import Keys
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
-from selenium.common.exceptions import TimeoutException
-
+import smtplib
+from email.header import Header
+from email.mime.text import MIMEText
 from time import sleep
 
+from selenium import webdriver
+from selenium.common.exceptions import TimeoutException
+from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.common.by import By
+from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.support.ui import WebDriverWait
 
 # 用户名（学号）
 username = '541713460000'
@@ -41,6 +43,50 @@ zhoukou = 0
 
 # 其他需要说明的情况
 other_info = '无'
+
+# 是否发送邮件，发送则修改为 1
+mail_flag = 0
+
+
+def send_mail(flag):
+    # 发件邮箱
+    sender = '你的发件邮箱地址'
+
+    # 收件邮箱
+    receiver = '你的收件邮箱地址'
+
+    # 发件邮箱开通 SMTP 时提供的密码
+    smtp_pwd = 'SMTP 密码'
+
+    # 发件邮箱 SMTP 服务器地址
+    smtp_server = 'SMTP 服务器地址'
+
+    now_time = datetime.datetime.now().strftime('%F %T')
+    now_date = datetime.datetime.now().strftime('%F')
+
+    if flag == 1:
+        str = '登记成功，登记时间：' + now_time
+        msg = MIMEText(str, 'plain', 'utf-8')
+        head = now_date + ' 健康日报登记成功'
+        msg['Subject'] = Header(head, 'utf-8')
+    else:
+        msg = MIMEText('登记失败，请重新登记', 'plain', 'utf-8')
+        head = now_date + ' 健康日报登记失败'
+        msg['Subject'] = Header(head, 'utf-8')
+
+    msg['From'] = Header(sender)
+    msg['To'] = Header(receiver)
+
+    try:
+        server = smtplib.SMTP_SSL(smtp_server)
+        server.connect(smtp_server, 465)
+        server.login(sender, smtp_pwd)
+        server.sendmail(sender, receiver, msg.as_string())
+        server.quit()
+        print('邮件发送成功')
+
+    except smtplib.SMTPException:
+        print('邮件发送失败')
 
 
 def login(driver):
@@ -269,22 +315,37 @@ def main():
     options.add_experimental_option("mobileEmulation", mobile_emulation)
 
     cnt = 0
-    while True:
-        driver = webdriver.Chrome(chrome_options=options)
-        driver.set_page_load_timeout(30)
-        cnt += 1
-        print('正在进行第', cnt, '次尝试')
-        res = register(driver)
+    ok = 0
 
-        if res is True:
-            print('登记成功，愿疫情早日结束！')
-            break
-        elif cnt == 5:
-            print('超过尝试次数，请重新登记！')
-            break
+    try:
+        while True:
+            driver = webdriver.Chrome(chrome_options=options)
+            driver.set_page_load_timeout(30)
+            cnt += 1
+            print('正在进行第', cnt, '次尝试')
+            res = register(driver)
 
-        driver.quit()
-        sleep(5)
+            if res is True:
+                print('登记成功，愿疫情早日结束！')
+                ok = 1
+                break
+
+            elif cnt == 5:
+                print('超过尝试次数，请重新登记！')
+                break
+
+            driver.quit()
+            sleep(5)
+
+    except Exception as e:
+        print('莫名其妙的错误，请重新登记')
+
+    finally:
+        if mail_flag == 1:
+            if ok == 1:
+                send_mail(1)
+            else:
+                send_mail(0)
 
     os.system('pause')
 
