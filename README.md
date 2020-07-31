@@ -1,4 +1,4 @@
-# ZZULI 健康日报一键登记脚本
+# ZZULI 健康日报一键填报脚本
 
 基于 Python3 + Selenium3 + Chrome + ChromeDriver，通过模拟点击和输入完成每日健康登记。可搭配定时任务程序实现自动登记。
 

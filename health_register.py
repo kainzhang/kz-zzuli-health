@@ -20,17 +20,15 @@ def send_mail(flag, mail):
     now_date = datetime.datetime.now().strftime('%F')
 
     if flag == 1:
-        str = '登记成功，登记时间：' + now_time
-        msg = MIMEText(str, 'plain', 'utf-8')
-        head = now_date + ' 健康日报登记成功'
-        msg['Subject'] = Header(head, 'utf-8')
+        msg = MIMEText('登记成功，登记时间：' + now_time, 'plain', 'utf-8')
+        msg['Subject'] = Header(now_date + ' 健康日报登记成功', 'utf-8')
     else:
         msg = MIMEText('登记失败，请重新登记', 'plain', 'utf-8')
-        head = now_date + ' 健康日报登记失败'
-        msg['Subject'] = Header(head, 'utf-8')
+        msg['Subject'] = Header(now_date + ' 健康日报登记失败', 'utf-8')
 
     msg['From'] = Header(mail['sender'])
     msg['To'] = Header(mail['receiver'])
+
     try:
         server = smtplib.SMTP_SSL(mail['smtp_host'])
         server.connect(mail['smtp_host'], 465)
@@ -38,26 +36,25 @@ def send_mail(flag, mail):
         server.sendmail(mail['sender'], mail['receiver'], msg.as_string())
         server.quit()
         print('邮件发送成功')
-
     except smtplib.SMTPException:
         print('邮件发送失败')
 
 
 def login(driver, username, password):
-    url = 'http://iapp.zzuli.edu.cn/portal/portal-app/app-5/user.html'
-    driver.get(url)
-
     try:
+        url = 'http://iapp.zzuli.edu.cn/portal/portal-app/app-5/user.html'
+        driver.get(url)
         locator = (By.ID, 'tx_username')
         WebDriverWait(driver, 30).until(EC.presence_of_element_located(locator))
         driver.find_element_by_id('tx_username').send_keys(username)
         driver.find_element_by_id('tx_password').send_keys(password)
         sleep(1)
         driver.find_element_by_class_name('login_btn').click()
-        sleep(1)
-        print('登录成功，开始登记')
-        return True
 
+        locator = (By.CLASS_NAME, 'user_name')
+        WebDriverWait(driver, 30).until(EC.presence_of_element_located(locator))
+        print('登录成功')
+        return True
     except TimeoutException:
         print('登录超时，网络问题')
         return False
@@ -186,7 +183,6 @@ def register(driver, user):
                 'html/body/div/div/div[3]/div[5]/div/div[2]//div/div/div/textarea'
             ).click()
             WebDriverWait(driver, 30).until(EC.text_to_be_present_in_element_value(locator, ''))
-
         except TimeoutException:
             print('地址获取超时')
             return False
@@ -245,7 +241,9 @@ def register(driver, user):
         driver.find_element_by_xpath(
             './/div[@class="van-dialog"]/div[3]/button[2]'
         ).click()
-        sleep(0.5)
+
+        locator = (By.XPATH, './/div[@class="div-body"]/p[1]')
+        WebDriverWait(driver, 30).until(EC.presence_of_element_located(locator))
         return True
 
     except TimeoutException:
@@ -265,6 +263,7 @@ def main():
     mobile_emulation = {'deviceName': 'iPhone 6'}
     options = Options()
     options.add_experimental_option("mobileEmulation", mobile_emulation)
+    options.add_argument("--headless")
 
     cnt = 0
     ok = 0
@@ -299,5 +298,6 @@ def main():
     os.system('pause')
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     main()
+    
