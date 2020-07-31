@@ -1,21 +1,24 @@
-[{
-  "username": "541713460000",
-  "password": "xxxxxxxx",
-  "dormitory_loc": "KX",
-  "dormitory_bd": "3",
-  "dormitory_num": "615",
-  "mobile_phone": "15600000000",
-  "home_phone": "13200000000",
-  "xinyang": 0,
-  "nanyang": 0,
-  "zhumadian": 0,
-  "shangqiu": 0,
-  "zhoukou": 0,
-  "other_info": "无",
-  "mail_flag": 0
-},{
-  "sender": "xxxx@163.com",
-  "receiver": "xxxx@icloud.com",
-  "smtp_pwd": "XXXXXXXXXXXXXXXX",
-  "smtp_host": "smtp.163.com"
-}]
+{
+  "user": {
+    "username": "541713460000",
+    "password": "xxxxxxxx",
+    "dormitory_loc": "KX",
+    "dormitory_bd": "3",
+    "dormitory_num": "615",
+    "mobile_phone": "15600000000",
+    "home_phone": "13200000000",
+    "xinyang": 0,
+    "nanyang": 0,
+    "zhumadian": 0,
+    "shangqiu": 0,
+    "zhoukou": 0,
+    "other_info": "无",
+    "mail_flag": 0
+  },
+  "mail": {
+    "sender": "xxxx@163.com",
+    "receiver": "xxxx@icloud.com",
+    "smtp_pwd": "XXXXXXXXXXXXXXXX",
+    "smtp_host": "smtp.163.com"
+  }
+}

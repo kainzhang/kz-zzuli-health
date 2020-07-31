@@ -40,6 +40,7 @@ pip install selenium
 以上配置完成后，编辑 `user_info.json` 文件，按照如下要求将信息替换为自己的，疫情期间到过的城市应修改为 `1`，如到过周口，则 `"zhoukou": 1`；`mail_flag` 为可选项，需要邮件发送结果则将值修改为 `1`，并配置邮箱信息。编辑完成后双击运行 `health_register.py` 即可；用 Python 相关 IDE 运行也可，注意配置环境。
 
 ``` json
+"user": {
   "username": "用户名，学号",
   "password": "信息门户密码",
   "dormitory_loc": "宿舍所在校区，科学：KX 走读：ZD",
@@ -54,6 +55,7 @@ pip install selenium
   "zhoukou": 0,
   "other_info": "其他需要说明的情况",
   "mail_flag": 0
+}
 ```
 
 ## 使用任务计划程序
@@ -66,8 +68,10 @@ pip install selenium
 首先需要为邮箱开启 SMTP 服务，这里建议申请新邮箱作为发件邮箱。在邮箱设置中开启 `IMAP/SMTP` 服务，开启成功时会收到一个密码作为使用 SMTP 服务的密码。此外还需在邮箱设置页面找到邮箱提供的 SMTP 服务器地址。将上述信息及收件邮箱地址按照如下要求填写至 `user_info.json`，并同时将代码中的邮箱标记 `mail_flag` 修改为 `1`。
 
 ``` json
+"mail": {
   "sender": "你的发件邮箱地址",
   "receiver": "你的收件邮箱地址",
   "smtp_pwd": "发件邮箱开通 SMTP 时提供的密码",
   "smtp_host": "发件邮箱 SMTP 服务器地址"
+ }
 ```
