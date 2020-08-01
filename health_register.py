@@ -1,4 +1,3 @@
-import datetime
 import json
 import os
 import smtplib
@@ -16,8 +15,8 @@ from selenium.webdriver.support.ui import WebDriverWait
 
 
 def send_mail(flag, mail):
-    now_time = datetime.datetime.now().strftime('%F %T')
-    now_date = datetime.datetime.now().strftime('%F')
+    now_time = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime())
+    now_date = time.strftime('%Y-%m-%d', time.localtime())
 
     if flag == 1:
         msg = MIMEText('登记成功，登记时间：' + now_time, 'plain', 'utf-8')
@@ -42,8 +41,7 @@ def send_mail(flag, mail):
 
 def login(driver, username, password):
     try:
-        url = 'http://iapp.zzuli.edu.cn/portal/portal-app/app-5/user.html'
-        driver.get(url)
+        driver.get('http://iapp.zzuli.edu.cn/portal/portal-app/app-5/user.html')
 
         # 验证成功进入用户登录界面
         locator = (By.ID, 'tx_username')
@@ -59,6 +57,7 @@ def login(driver, username, password):
         WebDriverWait(driver, 30).until(EC.presence_of_element_located(locator))
         print('登录成功')
         return True
+
     except TimeoutException:
         print('登录超时，网络问题')
         return False
@@ -70,8 +69,7 @@ def register(driver, user):
         return False
 
     try:
-        main_url = 'http://microapp.zzuli.edu.cn/microapplication/yqfk_qy/home.html'
-        driver.get(main_url)
+        driver.get('http://microapp.zzuli.edu.cn/microapplication/yqfk_qy/home.html')
 
         # 验证进入健康日报选项界面
         locator = (By.XPATH, './/div[@class="content"]/div[1]/a')
@@ -90,7 +88,6 @@ def register(driver, user):
         driver.find_element_by_xpath(
             'html/body/div/div/div[3]/div[3]/div[10]/div[2]/div/div/div/input'
         ).click()
-        time.sleep(0.5)
 
         # 等待选项框弹出
         locator = (By.XPATH, './/li[@role="button" and text()="东风校区"]')
@@ -124,61 +121,51 @@ def register(driver, user):
         driver.find_element_by_xpath(
             'html/body/div/div/div[3]/div[3]/div[11]/div/div[2]/div/div/div/input'
         ).send_keys(user['dormitory_num'])
-        time.sleep(0.5)
 
         # 10 联系电话 11位手机号
         driver.find_element_by_xpath(
             'html/body/div/div/div[3]/div[3]/div[12]/div[2]/div/div/div/input'
         ).send_keys(user['mobile_phone'])
-        time.sleep(0.5)
 
         # 10-1 家庭、家长 联系电话
         driver.find_element_by_xpath(
             'html/body/div/div/div[3]/div[3]/div[13]/div[2]/div/div/div/input'
         ).send_keys(user['home_phone'])
-        time.sleep(0.5)
 
         # 13 假期是否到过湖北以下地区（默认：无
         driver.find_element_by_xpath(
             'html/body/div/div/div[3]/div[3]/div[20]/div/div[2]/div/div/div/div/div/div[1]'
         ).click()
-        time.sleep(0.5)
 
         # 14 假期是否到过河南以下地区
         if user['xinyang'] == 1:
             driver.find_element_by_xpath(
                 'html/body/div/div/div[3]/div[3]/div[22]/div/div[2]/div/div/div/div/div/div[2]'
             ).click()
-            time.sleep(0.5)
 
         if user['nanyang'] == 1:
             driver.find_element_by_xpath(
                 'html/body/div/div/div[3]/div[3]/div[22]/div/div[2]/div/div/div/div/div/div[3]'
             ).click()
-            time.sleep(0.5)
 
         if user['zhumadian'] == 1:
             driver.find_element_by_xpath(
                 'html/body/div/div/div[3]/div[3]/div[22]/div/div[2]/div/div/div/div/div/div[4]'
             ).click()
-            time.sleep(0.5)
 
         if user['shangqiu'] == 1:
             driver.find_element_by_xpath(
                 'html/body/div/div/div[3]/div[3]/div[22]/div/div[2]/div/div/div/div/div/div[5]'
             ).click()
-            time.sleep(0.5)
 
         if user['zhoukou'] == 1:
             driver.find_element_by_xpath(
                 'html/body/div/div/div[3]/div[3]/div[22]/div/div[2]/div/div/div/div/div/div[6]'
             ).click()
-            time.sleep(0.5)
 
         driver.find_element_by_xpath(
             'html/body/div/div/div[3]/div[3]/div[22]/div/div[2]/div/div/div/div/div/div[1]'
         ).click()
-        time.sleep(0.5)
 
         # 15 目前您的位置和居住地点（由浏览器自动获取
         locator = (By.XPATH, 'html/body/div/div/div[3]/div[5]/div/div[2]/div/div/div/textarea')
@@ -192,37 +179,31 @@ def register(driver, user):
         driver.find_element_by_xpath(
             'html/body/div/div/div[3]/div[5]/div[2]/div[2]/div/div[2]'
         ).click()
-        time.sleep(0.5)
 
         # 15-3 您所在的小区是否有确诊病例（默认：无
         driver.find_element_by_xpath(
             'html/body/div/div/div[3]/div[6]/div/div[2]/div/div[1]'
         ).click()
-        time.sleep(0.5)
 
         # 17 您今日有无以下症状（默认：无
         driver.find_element_by_xpath(
             'html/body/div/div/div[3]/div[10]/div[2]/div/div/div/div/div/div[1]'
         ).click()
-        time.sleep(0.5)
 
         # 18 今日同住人员身体状况（默认：无症状
         driver.find_element_by_xpath(
             'html/body/div/div/div[3]/div[12]/div[2]/div/div/div[1]'
         ).click()
-        time.sleep(0.5)
 
         # 18-2 您是否与疫区人员有过接触（默认：否
         driver.find_element_by_xpath(
             'html/body/div/div/div[3]/div[14]/div/div[2]/div/div[1]'
         ).click()
-        time.sleep(0.5)
 
         # 20-5 您是否曾经被诊断为确诊病例（默认：否
         driver.find_element_by_xpath(
             'html/body/div/div/div[3]/div[21]/div/div[2]/div/div[1]'
         ).click()
-        time.sleep(0.5)
 
         # 21 其他需要说明的情况
         driver.find_element_by_xpath(
@@ -234,7 +215,10 @@ def register(driver, user):
         driver.find_element_by_xpath(
             './/div[@class="submit-div"]/button'
         ).click()
-        time.sleep(0.5)
+
+        # 验证弹窗可见
+        locator = (By.XPATH, './/div[@class="van-dialog"]/div[3]/button[2]')
+        WebDriverWait(driver, 10).until(EC.visibility_of_element_located(locator))
 
         # 确认提交
         driver.find_element_by_xpath(
@@ -249,9 +233,6 @@ def register(driver, user):
     except TimeoutException:
         print('登记超时，网络问题')
         return False
-    except Exception:
-        print('登记失败，请核对信息')
-        return False
 
 
 def main():
@@ -259,7 +240,6 @@ def main():
         data = json.load(f)
     user = data['user']
     mail = data['mail']
-
     mobile_emulation = {'deviceName': 'iPhone 6'}
     options = Options()
     options.add_experimental_option("mobileEmulation", mobile_emulation)
@@ -275,7 +255,6 @@ def main():
             print('正在进行第', idx, '次尝试')
             res = register(driver, user)
             driver.quit()
-
             if res is True:
                 print('登记成功，愿疫情早日结束！')
                 flag = 1
@@ -286,7 +265,7 @@ def main():
 
             time.sleep(3)
     except Exception:
-        print('莫名其妙的错误，请重新登记')
+        print('登记失败，请核对信息并重新登记')
     finally:
         if user['mail_flag'] == 1:
             send_mail(flag, mail)
