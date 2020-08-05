@@ -35,6 +35,7 @@ def send_mail(flag, mail):
         server.sendmail(mail['sender'], mail['receiver'], msg.as_string())
         server.quit()
         print('邮件发送成功')
+
     except smtplib.SMTPException:
         print('邮件发送失败')
 
@@ -70,7 +71,7 @@ def register(driver, user):
 
     try:
         driver.get('http://microapp.zzuli.edu.cn/microapplication/yqfk_qy/home.html')
-
+        time.sleep(2)
         # 验证进入健康日报选项界面
         locator = (By.XPATH, './/div[@class="content"]/div[1]/a')
         WebDriverWait(driver, 30).until(EC.presence_of_element_located(locator))
@@ -242,8 +243,10 @@ def main():
     mail = data['mail']
     mobile_emulation = {'deviceName': 'iPhone 6'}
     options = Options()
-    options.add_experimental_option("mobileEmulation", mobile_emulation)
-    options.add_argument("--headless")
+    options.add_experimental_option('mobileEmulation', mobile_emulation)
+    options.add_experimental_option('excludeSwitches', ['enable-logging'])
+    options.add_argument('--headless')
+    options.add_argument('--disable-gpu')
 
     idx = 0
     flag = 0
@@ -264,8 +267,10 @@ def main():
                 break
 
             time.sleep(3)
+
     except Exception:
         print('登记失败，请核对信息并重新登记')
+
     finally:
         if user['mail_flag'] == 1:
             send_mail(flag, mail)
