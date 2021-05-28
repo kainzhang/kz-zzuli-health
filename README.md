@@ -1,6 +1,8 @@
 # ZZULI 健康日报一键填报脚本
 
-基于 Python3 + Selenium3 + Chrome + ChromeDriver，通过模拟点击和输入完成每日健康登记。可搭配定时任务程序实现自动登记。
+只兼容了2020年9月开学前的打卡，后续没有再适配更新，也没有探索更好的打卡方法。现在已经不需要打卡了，愿疫情早日结束，自由出行！
+
+基于 Python3 + Selenium3 + ChromeDriver，通过模拟点击和输入完成每日健康登记。可搭配定时任务程序实现自动登记。
 
 ## 前言
 
@@ -25,17 +27,12 @@ PS：因为有点麻烦，就没写以上相关的内容。如果存在上述情
 
 本脚本基于 Python3 + Selenium3 + Chrome + ChromeDriver，请确保 PC 上有安装 Python3、Selenium、Chrome 以及配置了 ChromeDriver。Python3、Chrome 请从官网下载并安装。
 
-确认已安装 Python 环境后，确认是否有安装 Selenium
-```
-pip show selenium
-```
-
-如未安装，在命令行输入如下语句安装 Selenium
+确认已安装 Python 环境后，使用 pip 安装 Selenium
 ```
 pip install selenium
 ```
 
-根据电脑已安装的 Chrome 版本（设置 -> 关于Chrome），在 [ChromeDriver 官网](http://chromedriver.chromium.org/) 下载版本号对应的 ChromeDriver（可能需要梯子）。解压文件并将 exe 文件拖入 Python 根目录的 Scripts 文件夹内；或者你个人为项目创建的 venv 虚拟环境的 Scripts 文件夹内。
+根据电脑已安装的 Chrome 版本（设置 -> 关于Chrome），在 [ChromeDriver 官网](http://chromedriver.chromium.org/) 下载版本号对应的 ChromeDriver（可能需要梯子）。解压文件并将 exe 文件拖入 Python 环境根目录的 bin 文件夹内；或者你喜欢的任意位置，并在代码中配置路径。
 
 以上配置完成后，编辑 `user_info.json` 文件，按照如下要求将信息替换为自己的，疫情期间到过的城市应修改为 `1`，如到过周口，则 `"zhoukou": 1`；`mail_flag` 为可选项，需要邮件发送结果则将值修改为 `1`，并配置邮箱信息。编辑完成后双击运行 `health_register.py` 即可；用 Python 相关 IDE 运行也可，注意配置环境。
 
